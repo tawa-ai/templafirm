@@ -17,4 +17,4 @@ def base_test_templater() -> Templater:
 
 def test_templater_initialization(base_test_templater: Templater) -> None:
     assert "test_provider" in base_test_templater.list_providers()
-    assert "eai" in base_test_templater.list_providers()
+    assert "gke" in base_test_templater.list_providers()

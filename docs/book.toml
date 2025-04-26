@@ -1,6 +1,6 @@
 [book]
-authors = ["EAI"]
+authors = ["Max Wierz"]
 language = "en"
 multilingual = false
 src = "src"
-title = "TF Templater"
+title = "Templafirm"

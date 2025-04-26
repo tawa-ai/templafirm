@@ -6,7 +6,7 @@ from typing import Dict
 from jinja2 import Environment, FileSystemLoader
 
 from templafirm.core.provider import Provider
-from templafirm.eai.eai_provider import EAIProvider
+from templafirm.gke.gke_provider import GKEProvider
 
 
 @dataclass
@@ -26,12 +26,12 @@ class Templater:
     based off the provided template and args given by provider.
     """
 
-    eai_provider = EAIProvider()
+    gke_provider = GKEProvider()
     _provider_registry: ProviderRegistry = ProviderRegistry(
         providers={
-            "eai": ProviderAndEnvironment(
-                provider=eai_provider,
-                environment=Environment(loader=FileSystemLoader(searchpath=eai_provider.template_directory_path())),
+            "gke": ProviderAndEnvironment(
+                provider=gke_provider,
+                environment=Environment(loader=FileSystemLoader(searchpath=gke_provider.template_directory_path())),
             )
         }
     )

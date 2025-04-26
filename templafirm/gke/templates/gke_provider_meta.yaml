@@ -1,12 +1,12 @@
 {
-  "name": "eai",
+  "name": "gke",
   "version": "0.0.1",
-  "description": "EAI tf resource template provider.",
+  "description": "gke tf resource template provider.",
   "template_mapping": {
     "mrdma_node_pool": {
       "name": "mrdma_node_pool",
       "version": "0.0.1",
-      "template_file_path": "eai_mrdma_node_pool.jinja2",
+      "template_file_path": "gke_mrdma_node_pool.jinja2",
       "template_inputs": []
     }
   }
