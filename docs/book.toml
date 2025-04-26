@@ -1,0 +1,6 @@
+[book]
+authors = ["EAI"]
+language = "en"
+multilingual = false
+src = "src"
+title = "TF Templater"

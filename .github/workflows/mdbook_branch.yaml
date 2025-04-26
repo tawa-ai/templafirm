@@ -1,0 +1,22 @@
+name: Build docs for testing doc build
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - docs/*
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-24.04 
+    env:
+      MDBOOK_VERSION: 0.4.42
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install mdBook
+        run: |
+          cargo install --version ${MDBOOK_VERSION} mdbook
+      - name: Build with mdBook
+        run: mdbook build docs

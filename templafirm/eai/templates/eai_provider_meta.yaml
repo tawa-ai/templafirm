@@ -1,0 +1,13 @@
+{
+  "name": "eai",
+  "version": "0.0.1",
+  "description": "EAI tf resource template provider.",
+  "template_mapping": {
+    "mrdma_node_pool": {
+      "name": "mrdma_node_pool",
+      "version": "0.0.1",
+      "template_file_path": "eai_mrdma_node_pool.jinja2",
+      "template_inputs": []
+    }
+  }
+}
