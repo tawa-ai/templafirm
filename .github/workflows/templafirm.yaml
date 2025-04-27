@@ -1,0 +1,40 @@
+name: "Templafirm"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    paths:
+      - pyproject.toml
+      - requirements/**
+      - templafirm/**
+      - test/**
+
+# Cancel existing runs when new jobs are spawned from the same branch, excepting master.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  Lint_Type_Check_Test_Templafirm:
+    name: "Lint, Format, Test, & Type Check Templafirm"
+    runs-on: ubuntu-24.04 
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
+      - name: Upgrade python
+        run: python -m pip install --upgrade pip
+      - name: Install Packages
+        run: python -m pip install -e ".[dev,test]"
+      - name: Lint
+        run: ruff check templafirm 
+      - name: Formatting
+        run: ruff format templafirm --check
+      - name: Type Check
+        run: mypy templafirm 
+      - name: Unit Testing
+        run: pytest test/unit
