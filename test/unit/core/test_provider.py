@@ -7,6 +7,7 @@ import yaml
 
 from templafirm.core.meta_table import ProviderMetaTable, ResourceTemplate
 from templafirm.core.provider import Provider
+from test import assets
 
 TEST_PROVIDER_META_PATH = "test/assets/test_provider_meta.yaml"
 
@@ -16,7 +17,9 @@ class BaseProviderTester(Provider):
         super().__init__(provider_meta_path)
 
     def template_directory_path(self) -> str:
-        return os.path.join(pathlib.Path(__file__).absolute().parents[2], "assets")
+        template_module_file_path = pathlib.Path(os.path.abspath(assets.__file__))
+        template_module_file_path = pathlib.Path(os.path.join(os.getcwd(), template_module_file_path))
+        return str(template_module_file_path.parent)
 
 
 @pytest.fixture

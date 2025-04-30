@@ -5,7 +5,7 @@
     "test_resource_template": {
       "name": "resource_template",
       "version": "0.0.1",
-      "template_file_path": "test_template.yaml",
+      "template_file_path": "test_template.jinja2",
     }
   }
 }
