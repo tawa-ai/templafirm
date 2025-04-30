@@ -45,7 +45,7 @@ jobs:
   Lint_Type_Check_Test_Templafirm:
     name: "Lint, Format, Test, & Type Check Templafirm"
     runs-on: ubuntu-24.04
-    needs: [check-version]
+    needs: [Check_Version]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
