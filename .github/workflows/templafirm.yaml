@@ -18,9 +18,37 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+
+  Check_Version:
+    name: "Check Version Bump"
+    runs-on: ubuntu-24.04 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Get Artifactory Tokens
+        uses: sg-innersource/artifactory-access@v1
+        id: artifactory-access
+      - name: Install Slack Notifier and Build
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install .
+      - name: Pip Search
+        run: |
+          export LATEST_VERSION=$(pip search templafirm | sed 's/[^0-9\.\-\/]//g' | sed '$!d')
+          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+      - name: Test Version Bump
+        run: |
+          CURRENT_VERSION=$(python -c "from importlib.metadata import version;print(version('slack_notifier'))")
+          LATEST_VERSION=${{ env.LATEST_VERSION }}
+          if [[ "$LATEST_VERSION" == "$CURRENT_VERSION" ]]; then
+            echo "Version needs to be bumped in pyproject.toml, version $LATEST_VERSION already exists."
+            exit 1
+          fi
+
   Lint_Type_Check_Test_Templafirm:
     name: "Lint, Format, Test, & Type Check Templafirm"
-    runs-on: ubuntu-24.04 
+    runs-on: ubuntu-24.04
+    needs: [check-version]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
