@@ -23,10 +23,29 @@ def test_templater_initialization(base_test_templater: Templater) -> None:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "provider_name, templated_resource, template_inputs", [("test_provider", "test_resource_template", {})]
+    "provider_name, templated_resource, template_inputs, expected_template_str",
+    [
+        ("test_provider", "test_empty_resource_template", {}, ""),
+        (
+            "test_provider",
+            "test_no_input_resource_template",
+            {},
+            'resource "test_resource" "test_resource_name" {\n  name                       = "test"\n}',
+        ),
+        (
+            "test_provider",
+            "test_input_resource_template",
+            {"resource_name": "test_resource", "input": "test_input"},
+            'resource "test_resource_input" "test_resource" {\n  input       = "test_input"\n}',
+        ),
+    ],
 )
 async def test_templater_generation(
-    base_test_templater: Templater, provider_name: str, templated_resource: str, template_inputs: Dict[str, Any]
+    base_test_templater: Templater,
+    provider_name: str,
+    templated_resource: str,
+    template_inputs: Dict[str, Any],
+    expected_template_str: str,
 ) -> None:
     assert provider_name in base_test_templater.list_providers()
 
@@ -34,4 +53,6 @@ async def test_templater_generation(
     assert templated_resource in provider_and_env.provider._provider_meta_table.template_mapping.keys()
 
     base_test_templater.activate_provider("test_provider")
-    await base_test_templater.render_template_resource(templated_resource, template_inputs)
+    templated_resource = await base_test_templater.render_template_resource(templated_resource, template_inputs)
+
+    assert templated_resource == expected_template_str

@@ -132,6 +132,15 @@ class Templater:
     async def render_template_resource(
         self, template_resource_name: str, template_resource_inputs: Dict[str, Any]
     ) -> Optional[str]:
+        """Render template resource async.
+
+        Args:
+            template_resource_name (str): Name of the resource to render, must be registered with active provider.
+            template_resource_inputs (Dict[str, Any]): Inputs to template.
+
+        Returns:
+            str: templated resource in the form of a string
+        """
         active_provider_obj = self._active_provider.provider
         if template_resource_name not in active_provider_obj:
             raise KeyError(f"{template_resource_name} not registered in {active_provider_obj.name} provider.")
