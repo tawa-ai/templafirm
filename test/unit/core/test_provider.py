@@ -41,13 +41,27 @@ def test_base_provider_initialization(
         name=base_test_provider_raw_yaml["name"],
         version=base_test_provider_raw_yaml["version"],
         template_mapping={
-            "test_resource_template": ResourceTemplate(
-                name=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"]["name"],
-                version=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"]["version"],
-                template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"][
+            "test_empty_resource_template": ResourceTemplate(
+                name=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"]["name"],
+                version=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"]["version"],
+                template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"][
                     "template_file_path"
                 ],
-            )
+            ),
+            "test_no_input_resource_template": ResourceTemplate(
+                name=base_test_provider_raw_yaml["template_mapping"]["test_no_input_resource_template"]["name"],
+                version=base_test_provider_raw_yaml["template_mapping"]["test_no_input_resource_template"]["version"],
+                template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_no_input_resource_template"][
+                    "template_file_path"
+                ],
+            ),
+            "test_input_resource_template": ResourceTemplate(
+                name=base_test_provider_raw_yaml["template_mapping"]["test_input_resource_template"]["name"],
+                version=base_test_provider_raw_yaml["template_mapping"]["test_input_resource_template"]["version"],
+                template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_input_resource_template"][
+                    "template_file_path"
+                ],
+            ),
         },
     )
     assert base_test_provider._provider_meta_table == expected_template_object
@@ -64,10 +78,10 @@ def test_base_provider_version(base_test_provider: Provider, base_test_provider_
 
 def test_base_provider_resource_get(base_test_provider: Provider, base_test_provider_raw_yaml: Dict[str, Any]) -> None:
     expected_resource = ResourceTemplate(
-        name=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"]["name"],
-        version=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"]["version"],
-        template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"][
+        name=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"]["name"],
+        version=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"]["version"],
+        template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"][
             "template_file_path"
         ],
     )
-    assert base_test_provider["test_resource_template"] == expected_resource
+    assert base_test_provider["test_empty_resource_template"] == expected_resource
