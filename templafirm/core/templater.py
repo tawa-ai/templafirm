@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from collections.abc import KeysView
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
@@ -21,6 +22,21 @@ class ProviderAndEnvironment:
 class ProviderRegistry:
     providers: Dict[str, ProviderAndEnvironment]
 
+    def keys(self) -> KeysView[str]:
+        return self.providers.keys()
+
+    def __getitem__(self, provider_key: str) -> ProviderAndEnvironment:
+        if provider_key not in self.providers:
+            raise KeyError(f"{provider_key} not a registered provider.")
+
+        return self.providers[provider_key]
+
+    def __setitem__(self, provider_key: str, provider_and_env: ProviderAndEnvironment) -> None:
+        self.providers[provider_key] = provider_and_env
+
+    def __contains__(self, provider_name: str) -> bool:
+        return provider_name in self.providers
+
 
 class Templater:
     """
@@ -41,7 +57,7 @@ class Templater:
         }
     )
 
-    def __init__(self, template_directory: str = ".", provider_lock_timeout: int = 5):
+    def __init__(self, provider_lock_timeout: int = 5, template_directory: str = "."):
         """Init Templater class instance.
 
         Args:
@@ -49,7 +65,7 @@ class Templater:
                 templates, defaults to current working directory.
         """
         self._template_directory = template_directory
-        self._active_provider = self._provider_registry.providers["gke"]
+        self._active_provider = self._provider_registry["gke"]
         self._provider_lock_timeout = provider_lock_timeout
 
     @classmethod
@@ -60,9 +76,9 @@ class Templater:
             provider_key (str): Lookup key for provider.
             provider_object (Any): Abstracted provider object with common interface.
         """
-        if provider_key in cls._provider_registry.providers:
+        if provider_key in cls._provider_registry:
             logging.warning(f"Overwriting previous registration of provider {provider_key}.")
-        cls._provider_registry.providers[provider_key] = ProviderAndEnvironment(
+        cls._provider_registry[provider_key] = ProviderAndEnvironment(
             provider=provider_object,
             provider_lock=asyncio.Lock(),
             environment=Environment(
@@ -80,10 +96,7 @@ class Templater:
         Returns:
             ProviderAndEnvironment: Provider and environment dataclass.
         """
-        if provider_key in cls._provider_registry.providers:
-            return cls._provider_registry.providers[provider_key]
-        else:
-            raise KeyError(f"{provider_key} not registered as a provider.")
+        return cls._provider_registry[provider_key]
 
     @classmethod
     def list_providers(cls) -> KeysView[str]:
@@ -92,7 +105,7 @@ class Templater:
         Returns:
             KeysView[str]: dict keys of the registered providers.
         """
-        return cls._provider_registry.providers.keys()
+        return cls._provider_registry.keys()
 
     @classmethod
     def list_templates(cls, provider_name: str) -> KeysView[str]:
@@ -101,7 +114,26 @@ class Templater:
         Returns:
             KeysView[str]: dict keys of registered templates.
         """
-        return cls._provider_registry.providers[provider_name].provider._provider_meta_table.template_mapping.keys()
+        return cls._provider_registry[provider_name].provider._provider_meta_table.template_mapping.keys()
+
+    def __verify_output_file_type(self, output_path: str, template_resource_name: str) -> bool:
+        """Verify output path has expected file type.
+
+        Args:
+            output_path (str): desired output path for template resource.
+            template_resource_name (str): name of the resource to template generate.
+
+        Returns:
+            bool: whether the file type is of the right type.
+        """
+        extension = os.path.splitext(output_path)[1]
+        # don't need to lock as only doing look up and not using attached environment
+        expected_extension = self._active_provider.provider[template_resource_name].file_extension
+        if expected_extension != extension:
+            logging.error(
+                "Didn't generate template, provided path does not have expected file type.\nExpected {self._active_provider[template_resource_name].file_extension}."
+            )
+        return expected_extension == extension
 
     def activate_provider(self, provider_name: str) -> None:
         """Set the active provider.
@@ -109,10 +141,7 @@ class Templater:
         Args:
             provider_name str: Name of the provider to set to active state.
         """
-        if provider_name in self.list_providers():
-            self._active_provider = self._provider_registry.providers[provider_name]
-        else:
-            raise KeyError(f"{provider_name} not a registered provider.")
+        self._active_provider = self._provider_registry[provider_name]
 
     async def acquire_provider_lock(self) -> asyncio.Lock:
         """Acquire the provider lock.
@@ -130,7 +159,7 @@ class Templater:
             raise asyncio.TimeoutError(f"Timeout acquiring provider lock in {self._provider_lock_timeout} seconds.")
 
     async def render_template_resource(
-        self, template_resource_name: str, template_resource_inputs: Dict[str, Any]
+        self, template_resource_inputs: Dict[str, Any], template_resource_name: str
     ) -> Optional[str]:
         """Render template resource async.
 
@@ -158,3 +187,27 @@ class Templater:
                 provider_lock.release()
                 logging.debug(f"Released {self._active_provider.provider.name} provider lock.")
         return template_render
+
+    async def render_template_resource_to_file(
+        self, output_path: str, template_resource_inputs: Dict[str, Any], template_resource_name: str
+    ) -> None:
+        """Render template and save it to a desired output file.
+
+        Args:
+            output_path (str): path to save templated resource.
+            template_resource_inputs (Dict[str, Any]): inputs to render template file.
+            template_resource_name (str): Name of the resource to template.
+        """
+        rendered_template_str = await self.render_template_resource(
+            template_resource_inputs=template_resource_inputs, template_resource_name=template_resource_name
+        )
+
+        if rendered_template_str is not None:
+            # verify output file type
+            if self.__verify_output_file_type(output_path=output_path, template_resource_name=template_resource_name):
+                if os.path.exists(output_path):
+                    logging.warning(f"{output_path} exists, overwriting with new templated resource.")
+                with open(output_path, "w+") as open_template_file:
+                    open_template_file.writelines(rendered_template_str)
+        else:
+            logging.error("Template failed to render, check logs.")

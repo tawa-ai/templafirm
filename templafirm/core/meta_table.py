@@ -10,6 +10,7 @@ class ResourceTemplate:
     version: str
     template_file_path: str
     description: str = ""
+    file_extension: str = ".tf"
     template_inputs: List[str] = dataclasses.field(default_factory=list)
 
 
