@@ -1,7 +1,7 @@
 name: Upload Templafirm to PyPi 
 
 on:
-  release:
+  pull_request: 
 
 jobs:
   pypi-publish:
