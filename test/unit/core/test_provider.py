@@ -7,6 +7,7 @@ import yaml
 
 from templafirm.core.meta_table import ProviderMetaTable, ResourceTemplate
 from templafirm.core.provider import Provider
+from test import assets
 
 TEST_PROVIDER_META_PATH = "test/assets/test_provider_meta.yaml"
 
@@ -16,7 +17,9 @@ class BaseProviderTester(Provider):
         super().__init__(provider_meta_path)
 
     def template_directory_path(self) -> str:
-        return os.path.join(pathlib.Path(__file__).absolute().parents[2], "assets")
+        template_module_file_path = pathlib.Path(os.path.abspath(assets.__file__))
+        template_module_file_path = pathlib.Path(os.path.join(os.getcwd(), template_module_file_path))
+        return str(template_module_file_path.parent)
 
 
 @pytest.fixture
@@ -38,13 +41,27 @@ def test_base_provider_initialization(
         name=base_test_provider_raw_yaml["name"],
         version=base_test_provider_raw_yaml["version"],
         template_mapping={
-            "test_resource_template": ResourceTemplate(
-                name=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"]["name"],
-                version=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"]["version"],
-                template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"][
+            "test_empty_resource_template": ResourceTemplate(
+                name=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"]["name"],
+                version=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"]["version"],
+                template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"][
                     "template_file_path"
                 ],
-            )
+            ),
+            "test_no_input_resource_template": ResourceTemplate(
+                name=base_test_provider_raw_yaml["template_mapping"]["test_no_input_resource_template"]["name"],
+                version=base_test_provider_raw_yaml["template_mapping"]["test_no_input_resource_template"]["version"],
+                template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_no_input_resource_template"][
+                    "template_file_path"
+                ],
+            ),
+            "test_input_resource_template": ResourceTemplate(
+                name=base_test_provider_raw_yaml["template_mapping"]["test_input_resource_template"]["name"],
+                version=base_test_provider_raw_yaml["template_mapping"]["test_input_resource_template"]["version"],
+                template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_input_resource_template"][
+                    "template_file_path"
+                ],
+            ),
         },
     )
     assert base_test_provider._provider_meta_table == expected_template_object
@@ -61,10 +78,10 @@ def test_base_provider_version(base_test_provider: Provider, base_test_provider_
 
 def test_base_provider_resource_get(base_test_provider: Provider, base_test_provider_raw_yaml: Dict[str, Any]) -> None:
     expected_resource = ResourceTemplate(
-        name=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"]["name"],
-        version=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"]["version"],
-        template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_resource_template"][
+        name=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"]["name"],
+        version=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"]["version"],
+        template_file_path=base_test_provider_raw_yaml["template_mapping"]["test_empty_resource_template"][
             "template_file_path"
         ],
     )
-    assert base_test_provider["test_resource_template"] == expected_resource
+    assert base_test_provider["test_empty_resource_template"] == expected_resource

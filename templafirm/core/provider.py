@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 from collections.abc import KeysView
 
@@ -19,6 +20,14 @@ class Provider(ABC):
             "Need to implement method to locate your template directory on fs. Done for Jinja2 FileSystemLoader."
         )
 
+    def __verify_meta_table(self, provider_meta_table: ProviderMetaTable) -> None:
+        """Verify the template files that are present in the meta table."""
+        for _, resource_template in provider_meta_table.template_mapping.items():
+            resource_template_path = os.path.join(
+                os.path.dirname(self._provider_meta_path), resource_template.template_file_path
+            )
+            assert os.path.exists(resource_template_path)
+
     def _load_meta_table(self) -> ProviderMetaTable:
         """Load meta provider definition table to memory."""
         with open(self._provider_meta_path, "r") as open_provider_meta_buffer:
@@ -33,6 +42,8 @@ class Provider(ABC):
                 resource_obj_defs[resource_name] = ResourceTemplate(**resource_yaml_def)  # type: ignore
 
             provider_meta_table.template_mapping = resource_obj_defs
+        # verify all files in the table exist in the described directory
+        self.__verify_meta_table(provider_meta_table)
         return provider_meta_table
 
     @property
@@ -46,6 +57,9 @@ class Provider(ABC):
     @property
     def resources(self) -> KeysView[str]:
         return self._provider_meta_table.template_mapping.keys()
+
+    def __contains__(self, resource_name: str) -> bool:
+        return resource_name in self._provider_meta_table.template_mapping
 
     def __getitem__(self, resource_name: str) -> ResourceTemplate:
         if resource_name not in self._provider_meta_table.template_mapping:

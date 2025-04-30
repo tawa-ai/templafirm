@@ -2,10 +2,20 @@
   "name": "test-provider",
   "version": "0.0.1",
   "template_mapping": {
-    "test_resource_template": {
-      "name": "resource_template",
+    "test_empty_resource_template": {
+      "name": "empty_resource_template",
       "version": "0.0.1",
-      "template_file_path": "test_template.yaml",
+      "template_file_path": "test_empty_template.jinja2",
+    },
+    "test_no_input_resource_template": {
+      "name": "no_input_resource_template",
+      "version": "0.0.1",
+      "template_file_path": "test_no_input_template.jinja2",
+    },
+    "test_input_resource_template": {
+      "name": "input_resource_template",
+      "version": "0.0.1",
+      "template_file_path": "test_input_template.jinja2",
     }
   }
 }
