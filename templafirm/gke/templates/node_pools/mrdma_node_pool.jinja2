@@ -1,0 +1,27 @@
+module "mrmda_node_pool" {
+  source = "../../modules/mrdma_node_pool/"
+
+  account_id                        = {{ gcp_project_id }}
+  autoscaling                       = {
+    total_min_node_count = {{ total_min_node_count }}
+    total_max_node_count = {{ total_max_node_count }}
+  }
+  cluster_name                      = {{ cluster_name }}
+  disk_size                         = {{ disk_size }}
+  disk_type                         = {{ dist_type }}
+  ephemeral_storage_local_ssd_count = {{ ephemeral_storage_local_ssd_count }}
+  gpu_accelerator                   = {
+    count = {{ gpu_accelerator_count }}
+    type  = {{ gpu_accelerator_type }}
+  }
+  image_type                        = {{ image_type }}
+  labels                            = {{ labels }} 
+  machine_type                      = {{ machine_type }}
+  node_pool_name                    = {{ node_pool_name }} 
+  node_region                       = {{ node_region }}
+  node_sa_email                     = {{ node_sa_email }} 
+  node_zone                         = {{ node_zone }}
+  placement_policy                  = {
+    type = {{ placement_policy_type }} 
+  }
+}

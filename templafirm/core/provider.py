@@ -59,10 +59,10 @@ class Provider(ABC):
         return self._provider_meta_table.template_mapping.keys()
 
     def __contains__(self, resource_name: str) -> bool:
-        return resource_name in self._provider_meta_table.template_mapping
+        return resource_name in self._provider_meta_table
 
     def __getitem__(self, resource_name: str) -> ResourceTemplate:
         if resource_name not in self._provider_meta_table.template_mapping:
             raise KeyError(f"{resource_name} does not exist in {self.__class__.__name__}.")
 
-        return self._provider_meta_table.template_mapping[resource_name]
+        return self._provider_meta_table[resource_name]
