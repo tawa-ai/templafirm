@@ -19,7 +19,7 @@ optional-dependencies = {build = {file = ["requirements/requirements.build.txt"]
 readme = {file = ["README.rst"]}
 
 [tool.setuptools.package-data]
-templafirm = ["py.typed", "*.jinja2"]
+templafirm = ["py.typed", "*.jinja2", "*.tf"]
 
 [tool.ruff]
 line-length = 120
