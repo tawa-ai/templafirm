@@ -13,10 +13,6 @@ class ResourceTemplate:
     file_extension: str = ".tf"
     template_inputs: Set[str] = dataclasses.field(default_factory=set)
 
-    @property
-    def inputs(self):
-        return self.template_inputs
-
 
 @dataclasses.dataclass
 class ProviderMetaTable:

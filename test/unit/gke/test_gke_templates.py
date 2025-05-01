@@ -57,7 +57,6 @@ async def test_gke_templater_generation(
         template_resource_inputs=template_inputs, template_resource_name=templated_resource
     )
 
-    print(repr(templated_resource_rendered))
     assert templated_resource_rendered == expected_template_str
 
 
@@ -112,5 +111,4 @@ async def test_gke_templater_file_generation(
 
         with open(output_path, "r") as open_template_buffer:
             templated_resource = "".join(open_template_buffer.readlines())
-        print(repr(templated_resource))
         assert templated_resource == expected_template_str

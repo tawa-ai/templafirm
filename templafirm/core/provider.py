@@ -39,8 +39,12 @@ class Provider(ABC):
             resource_obj_defs = {}
             for resource_name, resource_yaml_def in resource_yaml_defs.items():
                 # type ignore on this because mypy thinks the type is ResourceTemplate but it gets loaded as dict
-                resource_obj_defs[resource_name] = ResourceTemplate(**resource_yaml_def)  # type: ignore
-
+                resource_template_obj = ResourceTemplate(**resource_yaml_def)  # type: ignore
+                # have to do the same thing to the set of inputs
+                resource_template_obj.template_inputs = (
+                    set(resource_yaml_def["template_inputs"]) if "template_inputs" in resource_yaml_def else set()  # type: ignore
+                )
+                resource_obj_defs[resource_name] = resource_template_obj
             provider_meta_table.template_mapping = resource_obj_defs
         # verify all files in the table exist in the described directory
         self.__verify_meta_table(provider_meta_table)
