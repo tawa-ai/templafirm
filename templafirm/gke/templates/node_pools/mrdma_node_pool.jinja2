@@ -24,4 +24,8 @@ module "mrmda_node_pool" {
   placement_policy                  = {
     type = {{ placement_policy_type }} 
   }
+  reservation_affinity              = {
+    type = {{ reservation_type }}
+    reservations = {{ reservation_ids }}
+  }
 }
