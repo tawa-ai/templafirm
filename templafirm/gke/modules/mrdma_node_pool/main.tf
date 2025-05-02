@@ -185,7 +185,7 @@ resource "google_container_node_pool" "gpu_mrdma_node_pool" {
       disable-legacy-endpoints = "true"
     }
 
-    tags = var.reservation_affinity.reservations 
+    tags = var.reservation_affinity.reservations
   }
 
   dynamic "placement_policy" {
