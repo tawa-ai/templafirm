@@ -34,6 +34,7 @@ jobs:
       - name: Pip Search
         run: |
           export LATEST_VERSION=$(pip search templafirm | sed 's/[^0-9\.\-\/]//g' | sed '$!d')
+          echo "LATEST VERSION IS ${LATEST_VERSION}"
           echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
       - name: Test Version Bump
         run: |
