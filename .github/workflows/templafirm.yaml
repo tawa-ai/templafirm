@@ -93,7 +93,7 @@ jobs:
       - name: Integration Test
         run: pytest test/integration
 
-  TF Format:
+  TF_Format:
     name: "Terraform Format"
     runs-on: ubuntu-24.04
     needs: [Check_Version]
