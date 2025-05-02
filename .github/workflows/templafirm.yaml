@@ -82,6 +82,10 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.11.3"
+      - uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: 'my-project'
+          workload_identity_provider: "projects/4151888404/locations/global/workloadIdentityPools/github/providers/templafirm"
       - name: Integration Test
         run: pytest test/integration
 
