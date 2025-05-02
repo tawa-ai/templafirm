@@ -6,6 +6,8 @@ from templafirm.gke import templates
 
 
 class GKEProvider(Provider):
+    """Template provider for GKE. Abstraction on top of file path provided in package."""
+
     def __init__(self) -> None:
         self._localized_assets_pathway = self._get_localized_assets_path()
         super().__init__(self._localized_assets_pathway)
