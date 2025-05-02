@@ -53,6 +53,27 @@ async def plan() -> AsyncGenerator[tftest.TerraformPlanOutput]:
 
 
 @pytest.mark.asyncio
+async def test_gvnic_plan(plan: tftest.TerraformPlanOutput) -> None:
+    expected_net_set = {
+        "module.mrmda_node_pool.google_compute_network.gvnic_mrdma_vpc",
+        "module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_gvnic_mrdma",
+    }
+    resource_change_key_set = set(plan.resource_changes.keys())
+    assert expected_net_set.intersection(resource_change_key_set) == expected_net_set
+
+    gvnic_net_change = plan.resource_changes["module.mrmda_node_pool.google_compute_network.gvnic_mrdma_vpc"]
+    assert gvnic_net_change["change"]["after"]["name"] == "a3-ultragpu-8g-us-central1-b-test-id-gvnic"
+
+    gvnic_subnet_change = plan.resource_changes[
+        "module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_gvnic_mrdma"
+    ]["change"]["after"]
+    assert gvnic_subnet_change["ip_cidr_range"] == "192.170.1.0/24"
+    assert gvnic_subnet_change["name"] == "gvnic-sub-a3-ultragpu-8g-us-central1-b-test-id"
+    assert gvnic_subnet_change["project"] == "test-project"
+    assert gvnic_subnet_change["region"] == "us-central1"
+
+
+@pytest.mark.asyncio
 async def test_mrdma_plan(plan: tftest.TerraformPlanOutput) -> None:
     expected_subnet_set = {
         "module.mrmda_node_pool.google_compute_network.vpc_gke_roce",
@@ -85,27 +106,6 @@ async def test_mrdma_plan(plan: tftest.TerraformPlanOutput) -> None:
         assert mrdma_subnet_change["name"] == f"roce-sub-a3-ultragpu-8g-us-central1-b-test-id-{i}"
         assert mrdma_subnet_change["project"] == "test-project"
         assert mrdma_subnet_change["region"] == "us-central1"
-
-
-@pytest.mark.asyncio
-async def test_gvnic_plan(plan: tftest.TerraformPlanOutput) -> None:
-    expected_net_set = {
-        "module.mrmda_node_pool.google_compute_network.gvnic_mrdma_vpc",
-        "module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_gvnic_mrdma",
-    }
-    resource_change_key_set = set(plan.resource_changes.keys())
-    assert expected_net_set.intersection(resource_change_key_set) == expected_net_set
-
-    gvnic_net_change = plan.resource_changes["module.mrmda_node_pool.google_compute_network.gvnic_mrdma_vpc"]
-    assert gvnic_net_change["change"]["after"]["name"] == "a3-ultragpu-8g-us-central1-b-test-id-gvnic"
-
-    gvnic_subnet_change = plan.resource_changes[
-        "module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_gvnic_mrdma"
-    ]["change"]["after"]
-    assert gvnic_subnet_change["ip_cidr_range"] == "192.170.1.0/24"
-    assert gvnic_subnet_change["name"] == "gvnic-sub-a3-ultragpu-8g-us-central1-b-test-id"
-    assert gvnic_subnet_change["project"] == "test-project"
-    assert gvnic_subnet_change["region"] == "us-central1"
 
 
 @pytest.mark.asyncio
@@ -201,3 +201,14 @@ async def test_node_pool_plan(plan: tftest.TerraformPlanOutput) -> None:
             "taint": [],
         }
     ]
+
+
+@pytest.mark.asyncio
+async def test_services_plan(plan: tftest.TerraformPlanOutput) -> None:
+    expected_services_set = {
+        "module.mrmda_node_pool.google_project_service.usage_service",
+        "module.mrmda_node_pool.google_project_service.k8s_service",
+        "module.mrmda_node_pool.google_project_service.compute_service",
+    }
+    resource_change_key_set = set(plan.resource_changes.keys())
+    assert expected_services_set.intersection(resource_change_key_set) == expected_services_set
