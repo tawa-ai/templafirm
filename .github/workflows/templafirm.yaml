@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: [Check_Version]
     permissions:
-      content: write
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
