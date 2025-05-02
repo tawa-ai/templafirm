@@ -57,14 +57,11 @@ class Templater:
         }
     )
 
-    def __init__(self, provider_lock_timeout: int = 5, template_directory: str = "."):
+    def __init__(self, provider_lock_timeout: int = 5):
         """Init Templater class instance.
 
         Args:
-            template_directory (str, default = '.'). Directory to drop completed
-                templates, defaults to current working directory.
         """
-        self._template_directory = template_directory
         self._active_provider = self._provider_registry["gke"]
         self._provider_lock_timeout = provider_lock_timeout
 

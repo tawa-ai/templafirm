@@ -38,6 +38,8 @@ def test_gke_provider_mrdma_node_pool_resource(gke_test_provider: GKEProvider) -
             "node_sa_email",
             "node_zone",
             "placement_policy_type",
+            "reservation_ids",
+            "reservation_type",
             "total_max_node_count",
             "total_min_node_count",
         },
