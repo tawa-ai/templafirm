@@ -22,7 +22,7 @@ resource "google_compute_network" "gvnic_mrdma_vpc" {
     google_project_service.k8s_service
   ]
   mtu     = var.vpc_roce_mtu
-  name    = "${var.machine_type}-${var.node_region}-${var.node_zone}-gvnic"
+  name    = "${var.machine_type}-${var.node_region}-${var.node_zone}-${var.reservation_affinity.reservations[0]}-gvnic"
   project = var.account_id
 
 }
@@ -39,7 +39,7 @@ resource "google_compute_network" "vpc_gke_roce" {
     google_project_service.k8s_service
   ]
   mtu             = var.vpc_roce_mtu
-  name            = "${var.node_region}-${var.node_zone}-${var.machine_type}-mrdma"
+  name            = "${var.machine_type}-${var.node_region}-${var.node_zone}-${var.reservation_affinity.reservations[0]}-mrdma"
   network_profile = "projects/${var.account_id}/global/networkProfiles/${var.node_region}-${var.node_zone}-vpc-roce"
   project         = var.account_id
 }
@@ -53,7 +53,7 @@ resource "google_compute_subnetwork" "subnet_gke_roce" {
         machine_type = var.machine_type
         name         = var.node_pool_name
         node_region  = var.node_region
-        unique_name  = "${var.machine_type}-${var.node_region}-${var.node_zone}-${i}"
+        unique_name  = "${var.machine_type}-${var.node_region}-${var.node_zone}-${var.reservation_affinity.reservations[0]}-${i}"
       }]
     ])
     : item.unique_name => item
@@ -74,7 +74,7 @@ resource "google_compute_subnetwork" "subnet_gke_roce" {
 resource "google_compute_subnetwork" "subnet_gke_gvnic_mrdma" {
   description   = "Gvnic subnet for ${var.node_pool_name} in ${var.node_region}-${var.node_zone}"
   ip_cidr_range = "192.170.1.0/24"
-  name          = "gvnic-sub-${var.machine_type}-${var.node_region}-${var.node_zone}"
+  name          = "gvnic-sub-${var.machine_type}-${var.node_region}-${var.node_zone}-${var.reservation_affinity.reservations[0]}"
   network       = google_compute_network.gvnic_mrdma_vpc.id
   project       = var.account_id
   region        = var.node_region
@@ -83,7 +83,7 @@ resource "google_compute_subnetwork" "subnet_gke_gvnic_mrdma" {
 resource "google_container_node_pool" "gpu_mrdma_node_pool" {
   cluster  = var.cluster_name
   location = var.node_region
-  name     = var.node_pool_name
+  name     = "${var.node_pool_name}-${var.reservation_affinity.reservations[0]}"
   # The vpc and subnets are zone specific for mrdma so we need to define node pool per region & zones
   node_locations = ["${var.node_region}-${var.node_zone}"]
   project        = var.account_id
@@ -115,8 +115,8 @@ resource "google_container_node_pool" "gpu_mrdma_node_pool" {
         ],
         [
           for i in range(8) : {
-            subnetwork = google_compute_subnetwork.subnet_gke_roce["${var.machine_type}-${var.node_region}-${var.node_zone}-${i}"].name
-            network    = basename(google_compute_subnetwork.subnet_gke_roce["${var.machine_type}-${var.node_region}-${var.node_zone}-${i}"].network)
+            subnetwork = google_compute_subnetwork.subnet_gke_roce["${var.machine_type}-${var.node_region}-${var.node_zone}-${var.reservation_affinity.reservations[0]}-${i}"].name
+            network    = basename(google_compute_subnetwork.subnet_gke_roce["${var.machine_type}-${var.node_region}-${var.node_zone}-${var.reservation_affinity.reservations[0]}-${i}"].network)
           }
         ]
       )
@@ -184,6 +184,8 @@ resource "google_container_node_pool" "gpu_mrdma_node_pool" {
       # https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata
       disable-legacy-endpoints = "true"
     }
+
+    tags = var.reservation_affinity.reservations
   }
 
   dynamic "placement_policy" {

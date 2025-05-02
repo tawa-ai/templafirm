@@ -58,3 +58,7 @@ show_error_codes = true
 implicit_optional = false
 warn_return_any = false
 warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "tftest"
+ignore_missing_imports = true
