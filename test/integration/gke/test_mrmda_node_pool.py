@@ -53,7 +53,7 @@ async def plan() -> AsyncGenerator[tftest.TerraformPlanOutput]:
 
 
 @pytest.mark.asyncio
-async def test_mrdma(plan: tftest.TerraformPlanOutput) -> None:
+async def test_mrdma_plan(plan: tftest.TerraformPlanOutput) -> None:
     expected_subnet_set = {
         "module.mrmda_node_pool.google_compute_network.vpc_gke_roce",
         'module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-0"]',
@@ -88,7 +88,7 @@ async def test_mrdma(plan: tftest.TerraformPlanOutput) -> None:
 
 
 @pytest.mark.asyncio
-async def test_gvnic(plan: tftest.TerraformPlanOutput) -> None:
+async def test_gvnic_plan(plan: tftest.TerraformPlanOutput) -> None:
     expected_net_set = {
         "module.mrmda_node_pool.google_compute_network.gvnic_mrdma_vpc",
         "module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_gvnic_mrdma",
@@ -106,3 +106,98 @@ async def test_gvnic(plan: tftest.TerraformPlanOutput) -> None:
     assert gvnic_subnet_change["name"] == "gvnic-sub-a3-ultragpu-8g-us-central1-b-test-id"
     assert gvnic_subnet_change["project"] == "test-project"
     assert gvnic_subnet_change["region"] == "us-central1"
+
+
+@pytest.mark.asyncio
+async def test_node_pool_plan(plan: tftest.TerraformPlanOutput) -> None:
+    expected_node_pool_set = {"module.mrmda_node_pool.google_container_node_pool.gpu_mrdma_node_pool"}
+    resource_change_key_set = set(plan.resource_changes.keys())
+    assert expected_node_pool_set.intersection(resource_change_key_set) == expected_node_pool_set
+
+    node_pool_change = plan.resource_changes["module.mrmda_node_pool.google_container_node_pool.gpu_mrdma_node_pool"][
+        "change"
+    ]["after"]
+
+    # test expected resource_changes
+
+    assert node_pool_change["autoscaling"] == [
+        {"max_node_count": None, "min_node_count": None, "total_max_node_count": 4, "total_min_node_count": 0}
+    ]
+    assert node_pool_change["cluster"] == "test_cluster"
+    assert node_pool_change["location"] == "us-central1"
+    assert node_pool_change["network_config"] == [
+        {
+            "additional_node_network_configs": [
+                {"subnetwork": "gvnic-sub-a3-ultragpu-8g-us-central1-b-test-id"},
+                {"subnetwork": "roce-sub-a3-ultragpu-8g-us-central1-b-test-id-0"},
+                {"subnetwork": "roce-sub-a3-ultragpu-8g-us-central1-b-test-id-1"},
+                {"subnetwork": "roce-sub-a3-ultragpu-8g-us-central1-b-test-id-2"},
+                {"subnetwork": "roce-sub-a3-ultragpu-8g-us-central1-b-test-id-3"},
+                {"subnetwork": "roce-sub-a3-ultragpu-8g-us-central1-b-test-id-4"},
+                {"subnetwork": "roce-sub-a3-ultragpu-8g-us-central1-b-test-id-5"},
+                {"subnetwork": "roce-sub-a3-ultragpu-8g-us-central1-b-test-id-6"},
+                {"subnetwork": "roce-sub-a3-ultragpu-8g-us-central1-b-test-id-7"},
+            ],
+            "additional_pod_network_configs": [],
+            "create_pod_range": None,
+            "enable_private_nodes": True,
+            "network_performance_config": [],
+        }
+    ]
+    assert node_pool_change["node_config"] == [
+        {
+            "advanced_machine_features": [],
+            "boot_disk_kms_key": None,
+            "containerd_config": [],
+            "disk_size_gb": 100,
+            "disk_type": "fast",
+            "enable_confidential_storage": None,
+            "ephemeral_storage_local_ssd_config": [{"data_cache_count": None, "local_ssd_count": 0}],
+            "fast_socket": [{"enabled": False}],
+            "guest_accelerator": [
+                {
+                    "count": 1,
+                    "gpu_driver_installation_config": [{"gpu_driver_version": "LATEST"}],
+                    "gpu_partition_size": None,
+                    "gpu_sharing_config": [],
+                    "type": "h200",
+                }
+            ],
+            "gvnic": [{"enabled": True}],
+            "host_maintenance_policy": [],
+            "image_type": "image_type",
+            "labels": {"label": "label"},
+            "linux_node_config": [],
+            "local_nvme_ssd_block_config": [],
+            "local_ssd_encryption_mode": None,
+            "machine_type": "a3-ultragpu-8g",
+            "max_run_duration": None,
+            "metadata": {"disable-legacy-endpoints": "true"},
+            "node_group": None,
+            "oauth_scopes": [
+                "https://www.googleapis.com/auth/devstorage.read_only",
+                "https://www.googleapis.com/auth/logging.write",
+                "https://www.googleapis.com/auth/monitoring",
+                "https://www.googleapis.com/auth/service.management.readonly",
+                "https://www.googleapis.com/auth/servicecontrol",
+                "https://www.googleapis.com/auth/trace.append",
+            ],
+            "preemptible": False,
+            "reservation_affinity": [
+                {
+                    "consume_reservation_type": "SPECIFIC_RESERVATION",
+                    "key": "compute.googleapis.com/reservation-name",
+                    "values": ["test-id"],
+                }
+            ],
+            "resource_labels": None,
+            "resource_manager_tags": None,
+            "secondary_boot_disks": [],
+            "service_account": "somebody@email.com",
+            "sole_tenant_config": [],
+            "spot": False,
+            "storage_pools": None,
+            "tags": ["test-id"],
+            "taint": [],
+        }
+    ]

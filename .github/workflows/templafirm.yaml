@@ -65,3 +65,5 @@ jobs:
         run: mypy templafirm 
       - name: Unit Testing
         run: pytest test/unit
+      - name: Integration Testing
+        run: pytest test/integration

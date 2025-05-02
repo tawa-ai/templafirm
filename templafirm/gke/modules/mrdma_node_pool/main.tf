@@ -184,6 +184,8 @@ resource "google_container_node_pool" "gpu_mrdma_node_pool" {
       # https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata
       disable-legacy-endpoints = "true"
     }
+
+    tags = var.reservation_affinity.reservations 
   }
 
   dynamic "placement_policy" {
