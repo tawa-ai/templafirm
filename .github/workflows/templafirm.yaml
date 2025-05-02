@@ -70,6 +70,8 @@ jobs:
     name: "Integration Test"
     runs-on: ubuntu-24.04
     needs: [Check_Version]
+    permissions:
+      issues: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
