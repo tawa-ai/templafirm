@@ -92,3 +92,15 @@ jobs:
       - name: Integration Test
         run: pytest test/integration
 
+  TF Format:
+    name: "Terraform Format"
+    runs-on: ubuntu-24.04
+    needs: [Check_Version]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.11.3" 
+      - name: Format Check 
+        run: terraform fmt -check -recursive .
+
