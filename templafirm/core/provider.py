@@ -11,11 +11,24 @@ class Provider(ABC):
     """Base class struct for providing template structs to Jinja engine."""
 
     def __init__(self, provider_meta_path: str):
+        """Initialize a provider instance.
+
+        Args:
+            provider_meta_path (str): Path to the meta data table.
+        """
         self._provider_meta_path = provider_meta_path
         self._provider_meta_table = self._load_meta_table()
 
     @abstractmethod
     def template_directory_path(self) -> str:
+        """Get the defined path to the templates.
+
+        Raises:
+            NotImplementedError: When not implemented in subclass.
+
+        Returns:
+            str: The path on the system to the template directory.
+        """
         raise NotImplementedError(
             "Need to implement method to locate your template directory on fs. Done for Jinja2 FileSystemLoader."
         )
@@ -29,7 +42,11 @@ class Provider(ABC):
             assert os.path.exists(resource_template_path)
 
     def _load_meta_table(self) -> ProviderMetaTable:
-        """Load meta provider definition table to memory."""
+        """Load the meta table.
+
+        Returns:
+            ProviderMetaTable: Meta table for the provider containing the provider data and template data.
+        """
         with open(self._provider_meta_path, "r") as open_provider_meta_buffer:
             provider_yaml_obj = yaml.safe_load(open_provider_meta_buffer)
             provider_meta_table = ProviderMetaTable(**provider_yaml_obj)
@@ -52,14 +69,29 @@ class Provider(ABC):
 
     @property
     def name(self) -> str:
+        """Get name of provider.
+
+        Returns:
+            str: Provider name.
+        """
         return self._provider_meta_table.name
 
     @property
     def version(self) -> str:
+        """Get version of provider.
+
+        Returns:
+            str: Provider version.
+        """
         return self._provider_meta_table.version
 
     @property
     def resources(self) -> KeysView[str]:
+        """Get resource names as KeysView.
+
+        Returns:
+            KeysView[str]: Keys for provider defined resources.
+        """
         return self._provider_meta_table.template_mapping.keys()
 
     def __contains__(self, resource_name: str) -> bool:

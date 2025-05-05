@@ -1,0 +1,109 @@
+/*******************************************************************************
+* light theme
+*
+* all the variables used for light theme coloring
+*/
+html[data-theme="light"] {
+  /*****************************************************************************
+  * main colors
+  */
+  --pst-color-primary: hsl(0, 0%, 70%);
+  --pst-color-secondary: hsl(180, 100%, 95%);
+  --pst-color-success: rgb(40, 167, 69);
+  --pst-color-info: var(--pst-color-primary);
+  --pst-color-warning: var(--pst-color-secondary);
+  --pst-color-danger: rgb(220, 53, 69);
+  --pst-color-text-base: hsl(0, 0,70%);
+  --pst-color-text-muted: hsl(0, 0, 70%);
+  --pst-color-border: rgb(201, 201, 201);
+  --pst-color-shadow: rgb(216, 216, 216);
+
+  /*****************************************************************************
+  * depth colors
+  *
+  * background: the more in depth color
+  * on-background: the object directly set on the background, use of shadows in light theme
+  * surface: object set on the background (without shadows)
+  * on_surface: object set on surface object (without shadows)
+  */
+  --pst-color-background: hsl(270, 100%, 93%);
+  --pst-color-on-background: hsl(270, 100%, 86%);
+  --pst-color-surface: hsl(270, 100%, 82%);
+  --pst-color-on-surface: hsl(270, 100%, 78%);
+
+  /*****************************************************************************
+  * extentions
+  */
+
+  --pst-color-panel-background: var(--pst-color-background);
+
+  /*****************************************************************************
+  * layout
+  */
+
+  --pst-color-link: var(--pst-color-primary);
+  --pst-color-link-hover: var(--pst-color-secondary);
+
+  --pst-color-inline-code: rgb(232, 62, 140);
+
+  --pst-color-target: rgb(251, 229, 78);
+}
+
+/*******************************************************************************
+* dark theme
+*
+* all the variables used for dark theme coloring
+*/
+html[data-theme="dark"] {
+  /*****************************************************************************
+  * main colors
+  */
+  --pst-color-primary: hsl(153 92.3% 42.9%);
+  --pst-color-secondary: hsl(153 92.3% 42.9%);
+  --pst-color-success: rgb(72, 135, 87);
+  --pst-color-info: var(--pst-color-primary);
+  --pst-color-warning: var(--pst-color-secondary);
+  --pst-color-danger: rgb(203, 70, 83);
+  --pst-color-text-base: hsl(153 92.3% 50%);
+  --pst-color-text-muted: hsl(153 92.3% 50%);
+  --pst-color-border: rgb(192, 192, 192);
+  --pst-color-shadow: var(--pst-color-background);
+
+  /*****************************************************************************
+  * depth colors
+  *
+  * background: the more in depth color
+  * on-background: the object directly set on the background, use of a light grey in dark theme
+  * surface: object set on the background (without shadows)
+  * on_surface: object set on surface object (without shadows)
+  */
+  --pst-color-background: hsl(0, 0, 20%);
+  --pst-color-on-background: hsl(0, 0, 40%);
+  --pst-color-surface: hsl(0, 0, 50%);
+  --pst-color-on-surface: hsl(0, 0, 60%);
+
+  /*****************************************************************************
+  * extentions
+  */
+
+  --pst-color-panel-background: var(--pst-color-background-up);
+
+  /*****************************************************************************
+  * layout
+  */
+
+  --pst-color-link: var(--pst-color-primary);
+  --pst-color-link-hover: var(--pst-color-secondary);
+
+  --pst-color-inline-code: rgb(221, 158, 194);
+
+  --pst-color-target: rgb(71, 39, 0);
+
+  .only-light {
+    display: none !important;
+  }
+
+  img {
+    filter: brightness(0.8) contrast(1.2);
+  }
+}

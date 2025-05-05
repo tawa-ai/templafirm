@@ -5,17 +5,17 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "templafirm"
 authors = [{name = "Max Wierz", email ="weirzmax@gmail.com"}]
-version = "0.0.4"
+version = "0.0.5"
 requires-python = ">=3.10"
 dynamic = ["dependencies", "optional-dependencies"]
 
 [tool.setuptools]
 packages = ["templafirm"]
-py-modules = ["__init__"] # dash, not underscore
+py-modules = ["__init__"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements/requirements.txt"]}
-optional-dependencies = {build = {file = ["requirements/requirements.build.txt"]}, dev = {file = ["requirements/requirements.dev.txt"]}, test = {file = ["requirements/requirements.test.txt"]}}
+optional-dependencies = {build = {file = ["requirements/requirements.build.txt"]}, dev = {file = ["requirements/requirements.dev.txt"]}, docs = {file = ["requirements/requirements.doc.txt"]}, test = {file = ["requirements/requirements.test.txt"]}}
 readme = {file = ["README.rst"]}
 
 [tool.setuptools.package-data]
