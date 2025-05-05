@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   # Build job
-  build:
+  Build:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
           path: ./docs/build
 
   # Deployment job
-  deploy:
+  Deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
