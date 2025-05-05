@@ -15,5 +15,4 @@ Module contents
 
 .. automodule:: templafirm
    :members:
-   :undoc-members:
    :show-inheritance:

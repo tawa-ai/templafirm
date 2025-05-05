@@ -19,6 +19,11 @@ class ProviderAndEnvironment:
         environment (Environment): Jinja2 environment for template generation.
         provider (Provider): Provider object for defining templates.
         provider_lock (asyncio.Lock): Lock for provider access across threads.
+
+    Attributes:
+        environment (Environment): Jinja2 environment for template generation.
+        provider (Provider): Provider object for defining templates.
+        provider_lock (asyncio.Lock): Lock for provider access across threads.
     """
 
     environment: Environment
@@ -31,6 +36,9 @@ class ProviderRegistry:
     """Provider register dataclass.
 
     Holds the providers that are available as well as some easy access and setter methods.
+
+    Attributes:
+        providers (Dict[str, ProviderAndEnvironment]): Mapping from provider names to objects registered into registry.
 
     Raises:
         KeyError: Raises if provider key doesn't exist in registry.
@@ -92,6 +100,11 @@ class Templater:
 
     Args:
         provider_lock_timeout (int, optional): Seconds to timeout on provider lock. Defaults to 5.
+
+    Attributes:
+        gke_provider (GKEProvider): Provider object for gke resources.
+        _provider_lock_timeout (int): Time in seconds before provider lock timesout.
+        _provider_registry (ProviderRegistry): Registry of providers available to all class instances.
 
     Raises:
         asyncio.TimeoutError: Raises if provider lock times out across instances. Done to ensure

@@ -17,7 +17,6 @@ templafirm.gke.gke\_provider module
 
 .. automodule:: templafirm.gke.gke_provider
    :members:
-   :undoc-members:
    :show-inheritance:
 
 Module contents
@@ -25,5 +24,4 @@ Module contents
 
 .. automodule:: templafirm.gke
    :members:
-   :undoc-members:
    :show-inheritance:

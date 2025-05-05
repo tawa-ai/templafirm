@@ -2,9 +2,10 @@
 #
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
-import sys
 import os
-sys.path.insert(0, os.path.abspath('../..'))
+import sys
+
+sys.path.insert(0, os.path.abspath("../.."))
 
 
 # -- Project information -----------------------------------------------------
@@ -18,17 +19,16 @@ author = "Max Weirz"
 
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
 ]
-
-autosummary_generate = True  # Turn on sphinx.ext.autosummary
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "pydata_sphinx_theme"
 
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 html_css_files = [
-    'css/custom.css',
+    "css/custom.css",
 ]

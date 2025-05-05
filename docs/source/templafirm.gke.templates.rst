@@ -6,5 +6,4 @@ Module contents
 
 .. automodule:: templafirm.gke.templates
    :members:
-   :undoc-members:
    :show-inheritance:

@@ -8,14 +8,18 @@ from templafirm.core.meta_table import ProviderMetaTable, ResourceTemplate
 
 
 class Provider(ABC):
-    """Base class struct for providing template structs to Jinja engine."""
+    """Base class struct for providing template structs to Jinja engine.
+
+
+    Args:
+        provider_meta_path (str): Path to the meta data table.
+
+    Attributes:
+        _provider_meta_path (str): Path to the meta data table.
+        _provider_meta_table (ProviderMetaTable): Meta table object storing provider meta and resources.
+    """
 
     def __init__(self, provider_meta_path: str):
-        """Initialize a provider instance.
-
-        Args:
-            provider_meta_path (str): Path to the meta data table.
-        """
         self._provider_meta_path = provider_meta_path
         self._provider_meta_table = self._load_meta_table()
 
