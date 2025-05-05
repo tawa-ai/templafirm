@@ -13,7 +13,13 @@ from templafirm.gke.gke_provider import GKEProvider
 
 @dataclass
 class ProviderAndEnvironment:
-    """Dataclass containing provider, associated jinja env, and lock for provider access."""
+    """Dataclass containing provider, associated jinja env, and lock for provider access.
+
+    Args:
+        environment (Environment): Jinja2 environment for template generation.
+        provider (Provider): Provider object for defining templates.
+        provider_lock (asyncio.Lock): Lock for provider access across threads.
+    """
 
     environment: Environment
     provider: Provider
@@ -85,7 +91,7 @@ class Templater:
     provider support.
 
     Args:
-            provider_lock_timeout (int, optional): Seconds to timeout on provider lock. Defaults to 5.
+        provider_lock_timeout (int, optional): Seconds to timeout on provider lock. Defaults to 5.
 
     Raises:
         asyncio.TimeoutError: Raises if provider lock times out across instances. Done to ensure

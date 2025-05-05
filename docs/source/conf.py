@@ -18,12 +18,9 @@ author = "Max Weirz"
 
 extensions = [
     "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",
 ]
 
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
-
-exclude_patterns = ['venv']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
