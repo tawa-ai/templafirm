@@ -1,6 +1,7 @@
 *book/*
 *build/*
 *dist*
+*docs/build*
 *egg*
 *mypy_cache*
 *pycache*

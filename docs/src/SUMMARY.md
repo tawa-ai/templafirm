@@ -1,3 +1,0 @@
-# Templafirm 
-
-- [Overview](./overview.md)

@@ -13,6 +13,19 @@ from templafirm.gke.gke_provider import GKEProvider
 
 @dataclass
 class ProviderAndEnvironment:
+    """Dataclass containing provider, associated jinja env, and lock for provider access.
+
+    Args:
+        environment (Environment): Jinja2 environment for template generation.
+        provider (Provider): Provider object for defining templates.
+        provider_lock (asyncio.Lock): Lock for provider access across threads.
+
+    Attributes:
+        environment (Environment): Jinja2 environment for template generation.
+        provider (Provider): Provider object for defining templates.
+        provider_lock (asyncio.Lock): Lock for provider access across threads.
+    """
+
     environment: Environment
     provider: Provider
     provider_lock: asyncio.Lock
@@ -20,28 +33,83 @@ class ProviderAndEnvironment:
 
 @dataclass
 class ProviderRegistry:
+    """Provider register dataclass.
+
+    Holds the providers that are available as well as some easy access and setter methods.
+
+    Attributes:
+        providers (Dict[str, ProviderAndEnvironment]): Mapping from provider names to objects registered into registry.
+
+    Raises:
+        KeyError: Raises if provider key doesn't exist in registry.
+    """
+
     providers: Dict[str, ProviderAndEnvironment]
 
     def keys(self) -> KeysView[str]:
+        """Get keys of providers available.
+
+        Returns:
+            KeysView[str]: Key view of available providers.
+        """
         return self.providers.keys()
 
     def __getitem__(self, provider_key: str) -> ProviderAndEnvironment:
+        """Get provider by key.
+
+        Args:
+            provider_key (str): Key of provider.
+
+        Raises:
+            KeyError: Raises if provider key is not registered.
+
+        Returns:
+            ProviderAndEnvironment: ProviderAndEnvironment obj corresponding to provider and associated jinja env.
+        """
         if provider_key not in self.providers:
             raise KeyError(f"{provider_key} not a registered provider.")
 
         return self.providers[provider_key]
 
     def __setitem__(self, provider_key: str, provider_and_env: ProviderAndEnvironment) -> None:
+        """Set provider in registry by key
+
+        Args:
+            provider_key (str): Key of provider.
+            provider_and_env (ProviderAndEnvironment): ProviderAndEnvironment obj corresponding to provider and associated jinja env.
+        """
         self.providers[provider_key] = provider_and_env
 
     def __contains__(self, provider_name: str) -> bool:
+        """Determine if provider is registry.
+
+        Args:
+            provider_name (str): Key of provider in registry.
+
+        Returns:
+            bool: Whether provider exists in registry.
+        """
         return provider_name in self.providers
 
 
 class Templater:
-    """
-    Head class holding the regsitered providers and operating the template engine
-    based off the provided template and args given by provider.
+    """Renders files from templates provider by registered providers.
+
+    Supports adding new providers to the class level registry at runtime for custom
+    provider support.
+
+    Args:
+        provider_lock_timeout (int, optional): Seconds to timeout on provider lock. Defaults to 5.
+
+    Attributes:
+        gke_provider (GKEProvider): Provider object for gke resources.
+        _provider_lock_timeout (int): Time in seconds before provider lock timesout.
+        _provider_registry (ProviderRegistry): Registry of providers available to all class instances.
+
+    Raises:
+        asyncio.TimeoutError: Raises if provider lock times out across instances. Done to ensure
+            locking across all async Jinja envs.
+        KeyError: Raises if user attempts access to un-registered provider or template.
     """
 
     gke_provider = GKEProvider()
@@ -58,20 +126,16 @@ class Templater:
     )
 
     def __init__(self, provider_lock_timeout: int = 5):
-        """Init Templater class instance.
-
-        Args:
-        """
         self._active_provider = self._provider_registry["gke"]
         self._provider_lock_timeout = provider_lock_timeout
 
     @classmethod
     def register_provider(cls, provider_key: str, provider_object: Provider) -> None:
-        """Register provider into templater class attr.
+        """Register provider to class registry.
 
         Args:
-            provider_key (str): Lookup key for provider.
-            provider_object (Any): Abstracted provider object with common interface.
+            provider_key (str): Key of provider to register.
+            provider_object (Provider): Provider object to register.
         """
         if provider_key in cls._provider_registry:
             logging.warning(f"Overwriting previous registration of provider {provider_key}.")
@@ -106,10 +170,13 @@ class Templater:
 
     @classmethod
     def list_templates(cls, provider_name: str) -> KeysView[str]:
-        """List templates for particular provider
+        """List available templates for chosen provider.
+
+        Args:
+            provider_name (str): Name of provider to list templates.
 
         Returns:
-            KeysView[str]: dict keys of registered templates.
+            KeysView[str]: Key view of registered templates in chosen provider.
         """
         return cls._provider_registry[provider_name].provider._provider_meta_table.template_mapping.keys()
 
@@ -144,8 +211,10 @@ class Templater:
         """Acquire the provider lock.
 
         Raises:
-            asyncio.TimeoutError: Timeout error when the provider lock can't be
-                acquired.
+            asyncio.TimeoutError: Raises if provider locking times out.
+
+        Returns:
+            asyncio.Lock: Async lock object to return.
         """
         provider_lock = self._active_provider.provider_lock
         try:

@@ -1,2 +1,2 @@
-build
-twine
+build>=1.2.2.post1,<2
+twine>=6.1.0,<7
