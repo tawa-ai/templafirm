@@ -90,7 +90,7 @@ class Provider(ABC):
         return self._provider_meta_table.version
 
     @property
-    def resources(self) -> KeysView[str]:
+    def resources(self) -> KeysView:
         """Get resource names as KeysView.
 
         Returns:

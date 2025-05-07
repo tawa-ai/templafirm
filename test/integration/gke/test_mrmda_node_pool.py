@@ -9,7 +9,7 @@ from templafirm.core.templater import Templater
 
 
 @pytest_asyncio.fixture
-async def plan() -> AsyncGenerator[tftest.TerraformPlanOutput]:
+async def plan() -> AsyncGenerator:
     # purposefully do not use a temp dir as it borks tf import paths
     templater = Templater()
 

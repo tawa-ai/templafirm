@@ -46,7 +46,7 @@ class ProviderRegistry:
 
     providers: Dict[str, ProviderAndEnvironment]
 
-    def keys(self) -> KeysView[str]:
+    def keys(self) -> KeysView:
         """Get keys of providers available.
 
         Returns:
@@ -160,7 +160,7 @@ class Templater:
         return cls._provider_registry[provider_key]
 
     @classmethod
-    def list_providers(cls) -> KeysView[str]:
+    def list_providers(cls) -> KeysView:
         """List registered providers
 
         Returns:
@@ -169,7 +169,7 @@ class Templater:
         return cls._provider_registry.keys()
 
     @classmethod
-    def list_templates(cls, provider_name: str) -> KeysView[str]:
+    def list_templates(cls, provider_name: str) -> KeysView:
         """List available templates for chosen provider.
 
         Args:

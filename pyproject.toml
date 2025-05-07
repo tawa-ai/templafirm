@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "templafirm"
 authors = [{name = "Max Wierz", email ="weirzmax@gmail.com"}]
-version = "0.0.5"
-requires-python = ">=3.10"
+version = "0.0.6"
+requires-python = ">=3.8"
 dynamic = ["dependencies", "optional-dependencies"]
 
 [tool.setuptools]
@@ -24,7 +24,7 @@ templafirm = ["py.typed", "*.jinja2", "*.tf"]
 [tool.ruff]
 line-length = 120
 # Assume Python 3.10
-target-version = "py310"
+target-version = "py38"
 
 [tool.ruff.format]
 # doc string formatting
