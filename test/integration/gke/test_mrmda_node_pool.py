@@ -17,7 +17,7 @@ async def plan() -> AsyncGenerator:
     template_inputs = {
         "cluster_name": "test_cluster",
         "disk_size": "100",
-        "dist_type": "fast",
+        "disk_type": "fast",
         "ephemeral_storage_local_ssd_count": "0",
         "gcp_project_id": "test-project",
         "gpu_accelerator_count": "1",

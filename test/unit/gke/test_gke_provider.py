@@ -25,7 +25,7 @@ def test_gke_provider_mrdma_node_pool_resource(gke_test_provider: GKEProvider) -
         template_inputs={
             "cluster_name",
             "disk_size",
-            "dist_type",
+            "disk_type",
             "ephemeral_storage_local_ssd_count",
             "gcp_project_id",
             "gpu_accelerator_count",
