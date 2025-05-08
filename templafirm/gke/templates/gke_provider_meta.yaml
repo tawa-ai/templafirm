@@ -23,7 +23,7 @@
       "node_zone",
       "placement_policy_type",
       "reservation_ids",
-      "reservation_type".
+      "reservation_type",
       "total_max_node_count",
       "total_min_node_count"
     ]
