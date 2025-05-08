@@ -22,7 +22,7 @@ def gke_test_templater() -> Templater:
             {
                 "cluster_name": "test_cluster",
                 "disk_size": "100",
-                "dist_type": "fast",
+                "disk_type": "fast",
                 "ephemeral_storage_local_ssd_count": "0",
                 "gcp_project_id": "test-project",
                 "gpu_accelerator_count": "1",
@@ -69,7 +69,7 @@ async def test_gke_templater_generation(
             {
                 "cluster_name": "test_cluster",
                 "disk_size": "100",
-                "dist_type": "fast",
+                "disk_type": "fast",
                 "ephemeral_storage_local_ssd_count": "0",
                 "gcp_project_id": "test-project",
                 "gpu_accelerator_count": "1",
