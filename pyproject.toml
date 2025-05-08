@@ -5,12 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "templafirm"
 authors = [{name = "Max Wierz", email ="weirzmax@gmail.com"}]
-version = "0.0.6"
+version = "0.0.8"
 requires-python = ">=3.8"
 dynamic = ["dependencies", "optional-dependencies"]
 
 [tool.setuptools]
-packages = ["templafirm"]
 py-modules = ["__init__"]
 
 [tool.setuptools.dynamic]
@@ -18,8 +17,8 @@ dependencies = {file = ["requirements/requirements.txt"]}
 optional-dependencies = {build = {file = ["requirements/requirements.build.txt"]}, dev = {file = ["requirements/requirements.dev.txt"]}, docs = {file = ["requirements/requirements.doc.txt"]}, test = {file = ["requirements/requirements.test.txt"]}}
 readme = {file = ["README.rst"]}
 
-[tool.setuptools.package-data]
-templafirm = ["py.typed", "*.jinja2", "*.tf"]
+[tool.setuptools.packages.find]
+where = ["."]
 
 [tool.ruff]
 line-length = 120
