@@ -1,0 +1,4 @@
+include templafirm/gke/modules/mrdma_node_pool/*
+include templafirm/gke/templates/*
+include templafirm/gke/templates/node_pools/*
+include templafirm/py.typed
