@@ -40,6 +40,7 @@ def test_gke_provider_mrdma_node_pool_resource(gke_test_provider: GKEProvider) -
             "placement_policy_type",
             "reservation_ids",
             "reservation_type",
+            "resource_name",
             "total_max_node_count",
             "total_min_node_count",
         },
