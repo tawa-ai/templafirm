@@ -246,6 +246,7 @@ class Templater:
             resource_obj = active_provider_obj[template_resource_name]
             template = self._active_provider.environment.get_template(resource_obj.template_file_path)
             template_render = await template.render_async(**template_resource_inputs)
+            template_render = template_render.replace("'", '"')
         except Exception as e:
             logging.error(f"Error generating template: {e}")
         finally:
