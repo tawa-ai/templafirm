@@ -32,6 +32,7 @@ async def plan() -> AsyncGenerator:
         "placement_policy_type": "COMPACT",
         "reservation_ids": '["test-id"]',
         "reservation_type": "SPECIFIC_RESERVATION",
+        "resource_name": "mrdma_node_pool_test",
         "total_max_node_count": "4",
         "total_min_node_count": "0",
     }
@@ -55,17 +56,17 @@ async def plan() -> AsyncGenerator:
 @pytest.mark.asyncio
 async def test_gvnic_plan(plan: tftest.TerraformPlanOutput) -> None:
     expected_net_set = {
-        "module.mrmda_node_pool.google_compute_network.gvnic_mrdma_vpc",
-        "module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_gvnic_mrdma",
+        "module.mrdma_node_pool_test.google_compute_network.gvnic_mrdma_vpc",
+        "module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_gvnic_mrdma",
     }
     resource_change_key_set = set(plan.resource_changes.keys())
     assert expected_net_set.intersection(resource_change_key_set) == expected_net_set
 
-    gvnic_net_change = plan.resource_changes["module.mrmda_node_pool.google_compute_network.gvnic_mrdma_vpc"]
+    gvnic_net_change = plan.resource_changes["module.mrdma_node_pool_test.google_compute_network.gvnic_mrdma_vpc"]
     assert gvnic_net_change["change"]["after"]["name"] == "a3-ultragpu-8g-us-central1-b-test-id-gvnic"
 
     gvnic_subnet_change = plan.resource_changes[
-        "module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_gvnic_mrdma"
+        "module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_gvnic_mrdma"
     ]["change"]["after"]
     assert gvnic_subnet_change["ip_cidr_range"] == "192.170.1.0/24"
     assert gvnic_subnet_change["name"] == "gvnic-sub-a3-ultragpu-8g-us-central1-b-test-id"
@@ -76,27 +77,27 @@ async def test_gvnic_plan(plan: tftest.TerraformPlanOutput) -> None:
 @pytest.mark.asyncio
 async def test_mrdma_plan(plan: tftest.TerraformPlanOutput) -> None:
     expected_subnet_set = {
-        "module.mrmda_node_pool.google_compute_network.vpc_gke_roce",
-        'module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-0"]',
-        'module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-1"]',
-        'module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-2"]',
-        'module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-3"]',
-        'module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-4"]',
-        'module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-5"]',
-        'module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-6"]',
-        'module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-7"]',
+        "module.mrdma_node_pool_test.google_compute_network.vpc_gke_roce",
+        'module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-0"]',
+        'module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-1"]',
+        'module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-2"]',
+        'module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-3"]',
+        'module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-4"]',
+        'module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-5"]',
+        'module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-6"]',
+        'module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-7"]',
     }
     resource_change_key_set = set(plan.resource_changes.keys())
     assert expected_subnet_set.intersection(resource_change_key_set) == expected_subnet_set
 
     # test the name of the gke_roce net
-    mrdma_roce_change = plan.resource_changes["module.mrmda_node_pool.google_compute_network.vpc_gke_roce"]
+    mrdma_roce_change = plan.resource_changes["module.mrdma_node_pool_test.google_compute_network.vpc_gke_roce"]
     assert mrdma_roce_change["change"]["after"]["name"] == "a3-ultragpu-8g-us-central1-b-test-id-mrdma"
 
     # test data elements
     for i in range(0, 8):
         mrdma_subnet_change = plan.resource_changes[
-            f'module.mrmda_node_pool.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-{i}"]'
+            f'module.mrdma_node_pool_test.google_compute_subnetwork.subnet_gke_roce["a3-ultragpu-8g-us-central1-b-test-id-{i}"]'
         ]["change"]["after"]
         assert (
             mrdma_subnet_change["description"]
@@ -110,13 +111,13 @@ async def test_mrdma_plan(plan: tftest.TerraformPlanOutput) -> None:
 
 @pytest.mark.asyncio
 async def test_node_pool_plan(plan: tftest.TerraformPlanOutput) -> None:
-    expected_node_pool_set = {"module.mrmda_node_pool.google_container_node_pool.gpu_mrdma_node_pool"}
+    expected_node_pool_set = {"module.mrdma_node_pool_test.google_container_node_pool.gpu_mrdma_node_pool"}
     resource_change_key_set = set(plan.resource_changes.keys())
     assert expected_node_pool_set.intersection(resource_change_key_set) == expected_node_pool_set
 
-    node_pool_change = plan.resource_changes["module.mrmda_node_pool.google_container_node_pool.gpu_mrdma_node_pool"][
-        "change"
-    ]["after"]
+    node_pool_change = plan.resource_changes[
+        "module.mrdma_node_pool_test.google_container_node_pool.gpu_mrdma_node_pool"
+    ]["change"]["after"]
 
     # test expected resource_changes
 
@@ -206,9 +207,9 @@ async def test_node_pool_plan(plan: tftest.TerraformPlanOutput) -> None:
 @pytest.mark.asyncio
 async def test_services_plan(plan: tftest.TerraformPlanOutput) -> None:
     expected_services_set = {
-        "module.mrmda_node_pool.google_project_service.usage_service",
-        "module.mrmda_node_pool.google_project_service.k8s_service",
-        "module.mrmda_node_pool.google_project_service.compute_service",
+        "module.mrdma_node_pool_test.google_project_service.usage_service",
+        "module.mrdma_node_pool_test.google_project_service.k8s_service",
+        "module.mrdma_node_pool_test.google_project_service.compute_service",
     }
     resource_change_key_set = set(plan.resource_changes.keys())
     assert expected_services_set.intersection(resource_change_key_set) == expected_services_set
